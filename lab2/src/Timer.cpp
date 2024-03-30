@@ -6,7 +6,7 @@ Timer::Timer()
     RCC->APB2ENR |= RCC_APB2ENR_IOPAEN | RCC_APB2ENR_TIM1EN;
     
     TIM1->PSC = 8000 - 1;
-    TIM1->ARR = 1250 - 1;
+    TIM1->ARR = 1000 * timerSeconds - 1;
     
     enableCMSIS();
 }
@@ -21,7 +21,7 @@ void Timer::enableCMSIS()
 
     AFIO->MAPR |= AFIO_MAPR_TIM1_REMAP_0;
 
-    TIM1->CCR1 = 250 - 1;
+    TIM1->CCR1 = (1000 * timerSeconds) * pwmPercentage  - 1;
 
     TIM1->CCMR1 |= TIM_CCMR1_OC1M_1 | TIM_CCMR1_OC1M_2;
     TIM1->CCER |= TIM_CCER_CC1E | TIM_CCER_CC1P | TIM_CCER_CC1NE;
@@ -30,5 +30,26 @@ void Timer::enableCMSIS()
 
 void Timer::run()
 {
+    TIM1->CR1 |= TIM_CR1_CEN;
+}
+
+void Timer::changeTime(float seconds)
+{
+    timerSeconds = seconds;
+    update();
+}
+
+void Timer::changePercentage(float percnets)
+{
+    pwmPercentage = percnets;
+    update();
+}
+
+void Timer::update()
+{
+    TIM1->CR1 &= ~TIM_CR1_CEN;
+    TIM1->CNT = 0;
+    TIM1->ARR = 1000 * timerSeconds - 1;
+    TIM1->CCR1 = (1000 * timerSeconds) * pwmPercentage - 1;
     TIM1->CR1 |= TIM_CR1_CEN;
 }

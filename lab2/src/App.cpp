@@ -20,13 +20,17 @@ App::App()
 void App::run()
 {
     m_t.run();
+    m_adc.run();
     while (true)
     {
         if (m_terminals.hasNewCommand())
         {
-            m_terminals.sendMsg(m_terminals.newCommand());
+            m_commandParser.proccess(m_terminals.newCommand());
         }
-        m_terminals.sendMsg("Adc = " + std::to_string(m_adc.value()) + " \r\n");
+        if (m_adc.isChanged())
+        {
+            m_terminals.sendMsg("Adc = " + std::to_string(m_adc.value()) + " \r\n");
+        }
     }
 }
 

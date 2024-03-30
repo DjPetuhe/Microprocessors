@@ -4,12 +4,14 @@
 #include "Timer.h"
 #include "LedPort.h"
 #include "Terminals.h"
+#include "CommandParser.h"
 
 #include <memory>
 #include <functional>
 
 class App
 {
+    friend CommandParser;
 public:
     App();
     void run();
@@ -23,4 +25,5 @@ private:
     Timer m_t;
     LedPort m_led;
     Terminals m_terminals;
+    CommandParser m_commandParser;
 };
